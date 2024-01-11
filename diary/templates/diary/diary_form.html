@@ -1,0 +1,80 @@
+
+{% extends "base/navbar.html" %}
+{% load widget_tweaks %}
+{% load static %}
+
+
+{% block title %}
+
+{% if diary%}
+  {{ diary.title }}
+{% else %}
+  새 게시글 작성
+{% endif %} | SketchDay
+
+{% endblock title %}
+
+{% block content %}
+
+  <form class="post-form" method="post" autocomplete="off", enctype='multipart/form-data'>
+    {% csrf_token %}
+
+    <!--제목 입력-->
+
+    <div class="input input-title">
+      <p>제목</p>
+      {{ form.title|add_class:'input-group-text'|add_error_class:"error"|attr:"placeholder:제목" }}
+      {% for error in form.title.errors %}
+        <div class = 'error-message'>{{ error }} </div>
+      {% endfor %}
+    </div>
+
+    <!--날짜 입력-->
+    <div class="input input-date">
+      <p>날짜</p>
+      {{form.dt_created}}
+    </div>
+
+
+    <!--공개 여부-->
+      <div class="condition">
+        <p>공개여부</p>
+        <div class="radios">
+        {% for publics in form.public_TF %}
+        {{ publics }}
+        {% endfor %}
+      </div>
+      {% for error in form.public_TF.errors %}
+      <div class = 'error-message'>{{ error }} </div>
+      {% endfor %}
+    </div>
+    <!--댓글 여부-->
+    <div class="condition">
+      <p>댓글여부</p>
+      <div class="radios">
+      {% for comment in form.comment_TF %}
+        {{ comment }}
+        {% endfor %}
+      </div>
+        {% for error in form.item_comment_TF.errors %}
+        <div class = 'error-message'>{{ error }} </div>
+        {% endfor %}
+      </div>
+
+      <!--내용 입력-->
+    <div class="detail">
+      {{ form.content|add_class:'podo-input'|add_error_class:"error"|attr:"placeholder:상세 정보" }}
+      {% for error in form.content.errors %}
+        <div class = 'error-message'>{{ error }} </div>
+      {% endfor %}
+    </div>
+
+    <div class="buttons">
+      <a class="btn btn-primary" 
+      href="{% if diary%} {% url 'diary-detail' diary.id%} {% else %} {% url 'cal:calendar' %} {% endif %} ">
+        취소</a>
+      <button class="btn btn-primary" type="submit">완료</button>
+    </div>
+  </form>
+
+{% endblock content %}

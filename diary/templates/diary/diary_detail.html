@@ -1,0 +1,410 @@
+
+{% extends "base/navbar.html" %}
+
+{% load static %}
+
+
+{% block title %}{{ diary.title }} | SketchDay{% endblock title %}
+
+{% block content %}
+
+<!-- Modal -->
+<div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ratingModalLabel">추천 노래 평가하기</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16" id="first">
+          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16" id="second">
+          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16" id = "third">
+          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16" id="fourth">
+          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16" id=fifth>
+          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+        </svg>
+        <span id='score'></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="save_rating">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="post-detail">
+    <div class="header">
+      <a href="{% url 'main' %}">&lt; 목록으로</a>
+      {% if diary.author == user%}
+      <div class="buttons d-flex flex-row">
+        <a class="btn btn-primary btn-sm" href="{% url 'diary-delete' diary.id%}">삭제</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'diary-update' diary.id%}">수정</a>
+        {%if not diary.rate%}
+          <div id='ratingMusic'>
+            <a class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#ratingModal">평가</a>
+          </div>
+        {%endif%}
+      </div>
+      {% endif %}
+    </div>
+    <article>
+      {% if diary.image %}
+        <img class="image" src="{{ diary.image.url }}">
+      {% endif %}
+      <div class="post-meta">
+          <div class="item-info">  
+            <div  class="title">{{ diary.title }} </div>
+            <span class="date">{{ diary.dt_created|date:"Y.m.d" }}</span>
+            
+      </div>
+        
+      <a class="profile-link" href="{% url 'profile' diary.author.id %}">
+      <div class="podo-box gray-background profile">
+      <div class="profile-pic" style="background-image: url('{{ diary.author.profile_pic.url }}')"></div>
+      <div class="profile-info">
+      <div class="nickname">{{ diary.author.nickname }}</div>
+     </div>
+    </div>
+  </a>
+    <hr size="5px">
+    <p class="item-detail">
+      {{ diary.content |linebreaksbr }}
+    </p>  
+    <hr size="5px">
+    <p>{{ diary.emotion_val }}</p>
+    </article>
+    
+    <a href="javascript:doDisplay();"> <h2> >감정 상태 </h2></a>
+    <div id="emotionDIV">
+      <div style="display: flex; justify-content: center">
+        <div class="chart-container" style="height: 500px; width:500px">
+          <p style="text-align: center; font-size: 1.5rem">오늘은 {{ diary.emotion }} 하셨군요!</p>
+          <div>
+            <canvas id="myChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:80px">
+      
+    <a href="javascript:doDisplay2();"> <h2>>추천 노래 & 다른사람의 일기</h2></a>
+    <div id="youtubeDIV">
+      <div style="margin-bottom:50px">
+        <div style="float: left; padding-right:10px">
+          <iframe width="560" height="515" 
+          src="https://www.youtube.com/embed/{{ music.url }}"
+          frameborder="0" 
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen></iframe>
+        </div>
+  
+        <div class="podo-card post" style=" height:515px">
+          {%if rec_diary.image%}
+            <img class="thumb" src="{{rec_diary.image.url}}" alt="썸네일 이미지">
+          {%endif%}
+          <div class="content">
+            <h2 class="title">{{rec_diary.title}}</h2>
+            <div class="meta">
+              {{rec_diary.dt_created}}
+            </div>
+            <div class="meta">
+              {{ rec_diary.author.nickname }}
+            </div>
+            <a class="btn btn-primary" href="{% url 'diary-detail' rec_diary.id %}">자세히보기</a>
+          </div>
+        </div>
+        </div>
+    </div>
+    
+
+    </div>
+    <p></p>
+    {%if diary.comment_TF %}
+    <div class="card" style="margin-top:80px">
+      <div class="card-header">
+          <div class="col-md-12">
+              {% csrf_token %}
+              <div class="form-group row">
+                  <textarea class="form-control" id="content_id" rows="3" placeholder="댓글을 입력해주세요."></textarea>
+              </div>
+              <div class="text-right" style="float:right">
+                  <button id="comment_write" class="btn btn-sm">댓글달기</button>
+              </div>
+          </div>
+          <hr>
+          <div id="more_comment">
+              {% if comments %}
+                  {% for comment in comments %}
+                  <div id='{{ comment.id }}'>
+                      {% if comment.deleted %}
+                      <span>삭제된 댓글입니다.</span><hr>
+                      {% else %}
+                          {% if comment.author == diary.author %}
+                          <strong>{{ comment.author.nickname }}&nbsp;<span>(글쓴이)</span></strong>
+                          {% else  %}
+                          <strong>{{ comment.author.nickname }}</strong>
+                          {% endif %}
+                          <span style="float:right">{{ comment.dt_created }}</span>
+                          {% if comment.author == request.user or request.user.level == '0' or request.user.level == '1' %}
+                          <div>
+                              <div style="white-space:pre-wrap; text-align:left;">{{ comment.content }}</div>
+                              <div style="text-align: right;">
+                                  <a onclick="commentDelete('{{comment.id}}');">댓글삭제</a>
+                              </div>
+                          </div>
+                          <hr>
+                          {% else %}
+                          <div>
+                              <div style="white-space:pre-wrap; text-align:left;">{{ comment.content }}</div>
+                          </div>
+                          <hr>
+                          {% endif %}
+                      {% endif %}
+                  </div>
+                  <div class='{{ comment.id }}'></div>
+                  {% endfor %}
+              {% endif %}
+              <input type="hidden" id="comment_writer" value={{request.user}}>
+              <div id="comment_list"></div>
+          </div>
+      </div>
+  </div>
+  {%endif%}
+
+</div>
+<script>
+
+var emotion_pie = document.getElementById('myChart').getContext('2d');
+var emotionPieChart = new Chart(emotion_pie, {
+    type: 'pie',
+    data:{
+        labels: [ '불안', '분노' , '슬픔' , '평온' , '행복' ],
+        datasets: [{
+            data: {{ diary.emotion_value }},
+            backgroundColor: [
+              'rgba(54, 162, 235, 0.6)',
+              'rgba(75, 192, 192, 0.6)',
+              'rgba(255, 205, 86, 0.6)',
+              'rgba(255, 159, 64, 0.6)',
+              'rgba(255, 99, 132, 0.6)',
+            ],
+            borderWidth: 2
+        }]
+    }
+});
+
+// rating system
+const one = document.getElementById('first')
+const two = document.getElementById('second')
+const three = document.getElementById('third')
+const four = document.getElementById('fourth')
+const five = document.getElementById('fifth')
+const num = document.getElementById('score')
+
+const handleSelect = (selection) => {
+  switch(selection) {
+    case 'first' : {
+      one.setAttribute("fill", "red")
+      two.setAttribute("fill", "currentColor")
+      three.setAttribute("fill", "currentColor")
+      four.setAttribute("fill", "currentColor")
+      five.setAttribute("fill", "currentColor")
+      num.innerText = 1
+      return
+    }
+    case 'second' : {
+      one.setAttribute("fill", "red")
+      two.setAttribute("fill", "red")
+      three.setAttribute("fill", "currentColor")
+      four.setAttribute("fill", "currentColor")
+      five.setAttribute("fill", "currentColor")
+      num.innerText = 2
+      return
+    }
+    case 'third' : {
+      one.setAttribute("fill", "red")
+      two.setAttribute("fill", "red")
+      three.setAttribute("fill", "red")
+      four.setAttribute("fill", "currentColor")
+      five.setAttribute("fill", "currentColor")
+      num.innerText = 3
+      return
+    }
+    case 'fourth' : {
+      one.setAttribute("fill", "red")
+      two.setAttribute("fill", "red")
+      three.setAttribute("fill", "red")
+      four.setAttribute("fill", "red")
+      five.setAttribute("fill", "currentColor")
+      num.innerText = 4
+      return
+    }
+    case 'fifth' : {
+      one.setAttribute("fill", "red")
+      two.setAttribute("fill", "red")
+      three.setAttribute("fill", "red")
+      four.setAttribute("fill", "red")
+      five.setAttribute("fill", "red")
+      num.innerText = 5
+      return
+    }
+  }
+}
+
+const arr = [one, two, three, four, five]
+
+arr.forEach(item=> item.addEventListener('mouseover', (event)=> {
+  handleSelect(event.target.id)
+}))
+
+// save rating score with ajax
+const btnAjax = document.getElementById("save_rating")
+const diary_id = {{ diary.id }}
+const music_id = {{ music.id }}
+
+const x = document.getElementById("ratingMusic")
+
+btnAjax.addEventListener('click', e => {
+  console.log(num.innerText)
+  const param = {
+    'diary_id' : diary_id,
+    'music_id' : music_id,
+    'score' : num.innerText,
+  }
+
+  $.ajaxSetup({
+    headers : {'X-CSRFToken':'{{csrf_token}}'}
+  })
+
+  $.ajax({
+    url : 'http://127.0.0.1:8000/diary/rating/',
+    type : 'POST',
+    data : JSON.stringify(param),
+    success:function(data) {
+      x.style.display = "none"
+      console.log('success')
+    },
+    error : function(data) {
+      console.log('fail')
+    }
+  })
+})
+
+// 댓글 기능
+$(document).ready(function () {
+  $('#comment_write').click(function () {
+      var content= $("#content_id").val();
+      var writer= $("#comment_writer").val();
+      $.ajax({
+          type: "POST",
+          url: "{% url 'comment-write' diary.id %}",
+          dataType: "json",
+          data: {
+              'writer': writer,
+              'content': content,
+              'csrfmiddlewaretoken': '{{csrf_token}}',
+          },
+          success: function (response) {
+              if (response.self_comment) {
+                  $('#comment_list').append(
+                     '<div><div id='+response.comment_id+'><strong>'+response.writer+'&nbsp;<span>'+response.self_comment+'</span></strong>'+
+                     '<span style="float:right;">'+response.created+'</span>'+
+                     '<div><div style="white-space:pre-wrap; text-align:left;">'+response.content+
+                     '</div><div style="text-align:right;"><a onclick="commentDelete('+response.comment_id+');">댓글삭제</a></div></div><hr></div><div class='+response.comment_id+'></div>'
+                  );
+              }
+              else{
+                  $('#comment_list').append(
+                      '<div><div id='+response.comment_id+'><strong>'+response.writer+'</strong>'+
+                      '<span style="float:right;">'+response.created+'</span>'+
+                      '<div><div style="white-space:pre-wrap; text-align:left;">'+response.content+
+                      '</div><div style="text-align:right;"><a onclick="commentDelete('+response.comment_id+');">댓글삭제</a></div></div><hr></div><div class='+response.comment_id+'></div>'
+                  );
+              }
+              $('#content_id').val("");
+          },
+          error: function () {
+              if ($('#content_id').val()=="") {
+                  alert('댓글을 입력해주세요.');
+              }
+          },
+      })
+  });
+});
+
+//댓글 삭제
+function commentDelete(value) {
+  var comment_id = value;
+  var delete_warning = confirm('댓글을 삭제하시겠습니까?');
+  if (delete_warning == true) {
+      $.ajax({
+          type: "POST",
+          url: "{% url 'comment-delete' diary.id %}",
+          dataType: "json",
+          data: {
+              'comment_id': comment_id,
+              'csrfmiddlewaretoken': '{{csrf_token}}',
+          },
+          success: function (response) {
+              $('#'+response.comment_id).replaceWith('<span style="color:gray;">삭제된 댓글입니다.</span><hr>');
+          },
+          error: function () {
+              alert('본인 댓글이 아닙니다.');
+          },
+      });
+  }
+}
+
+function doDisplay(){
+	var con = document.getElementById("emotionDIV");
+	if(con.style.display=='none'){
+		con.style.display = 'block';
+	}else{
+		con.style.display = 'none';
+	}
+}
+
+function doDisplay2(){
+	var con = document.getElementById("youtubeDIV");
+	if(con.style.display=='none'){
+		con.style.display = 'block';
+	}else{
+		con.style.display = 'none';
+	}
+}
+
+</script>
+
+{% endblock content %}
